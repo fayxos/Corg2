@@ -29,9 +29,9 @@ class CalendarManager: ObservableObject {
     }
     
     // MARK: - Fetch Events for a Specific Calendar
-    func fetchEvents(for calendar: EKCalendar, startDate: Date, endDate: Date) -> [EKEvent] {
+    func fetchEvents(for calendar: EKCalendar, name: String, startDate: Date, endDate: Date) -> [EKEvent] {
         let predicate = eventStore.predicateForEvents(withStart: startDate, end: endDate, calendars: [calendar])
-        return eventStore.events(matching: predicate)
+        return eventStore.events(matching: predicate).filter({ $0.title == name })
     }
     
     // MARK: - Add Event to Calendar
@@ -56,7 +56,9 @@ class CalendarManager: ObservableObject {
         
         let endDate = getDateFromWeekAndTime(week: week, weekday: entry.weekday, time: entry.endTime)!
         
-        addEvent(to: calendar, title: entry.name, location: entry.location, startDate: startDate, endDate: endDate)
+        if fetchEvents(for: calendar, name: entry.name, startDate: startDate, endDate: endDate).isEmpty {
+            addEvent(to: calendar, title: entry.name, location: entry.location, startDate: startDate, endDate: endDate)
+        }
     }
     
     func addEventsToCalendar(to calendar: EKCalendar, week: Int, selection: Set<CalendarEntry>?) {

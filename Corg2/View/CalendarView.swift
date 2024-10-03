@@ -37,7 +37,20 @@ struct CalendarView: View {
             }
             .padding()
             
-            List(calendarManager.calendarEntries.filter { $0.calendar == calendar.calendarIdentifier }.sorted(by: { "\($0.weekday.number)  \($0.startTime.formatted(date: .omitted, time: .standard))" < "\($1.weekday.number)  \($1.startTime.formatted(date: .omitted, time: .standard))" }), id: \.self, selection: $selection) { entry in
+            List(calendarManager.calendarEntries.filter { $0.calendar == calendar.calendarIdentifier }.sorted(by: {
+                let calendar = Calendar.current
+                if $0.weekday.number != $1.weekday.number {
+                    return $0.weekday.number < $1.weekday.number
+                } else if calendar.component(.hour, from: $0.startTime) != calendar.component(.hour, from: $1.startTime) {
+                    return calendar.component(.hour, from: $0.startTime) < calendar.component(.hour, from: $1.startTime)
+                } else if calendar.component(.minute, from: $0.startTime) != calendar.component(.minute, from: $1.startTime) {
+                    return calendar.component(.minute, from: $0.startTime) < calendar.component(.minute, from: $1.startTime)
+                } else if calendar.component(.hour, from: $0.endTime) != calendar.component(.hour, from: $1.endTime) {
+                    return calendar.component(.hour, from: $0.endTime) < calendar.component(.hour, from: $1.endTime)
+                } else {
+                    return calendar.component(.minute, from: $0.endTime) < calendar.component(.minute, from: $1.endTime)
+                }
+                     }), id: \.self, selection: $selection) { entry in
                     EntryTile(entry: entry)
                         .swipeActions {
                             Button {
@@ -51,13 +64,16 @@ struct CalendarView: View {
                             }
                             .tint(Color.red)
                         }
-                        .swipeActions(edge: .leading, allowsFullSwipe: false) {
+                        .swipeActions(edge: .leading, allowsFullSwipe: true) {
                             Button {
                                 duplicateEntry(entry: entry)
                             } label: {
                                 Image(systemName: "document.on.document.fill")
                             }
                             .tint(.blue)
+                        }
+                        .onAppear {
+                            print("\(entry.weekday.number)\(Calendar.current.dateComponents([.hour, .minute], from: entry.startTime))")
                         }
             }
             .toolbar {
