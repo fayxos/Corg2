@@ -12,7 +12,8 @@ import SwiftData
 struct Corg2App: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            Item.self,
+            FavoriteCalendar.self,
+            CalendarEntry.self
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
@@ -26,6 +27,7 @@ struct Corg2App: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(CalendarManager())
         }
         .modelContainer(sharedModelContainer)
     }
