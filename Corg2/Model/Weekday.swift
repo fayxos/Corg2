@@ -35,5 +35,21 @@ enum Weekday: String, CaseIterable, Identifiable, Codable {
         case .sunday: return 6
         }
     }
+    
+    func nextDay() -> Weekday {
+        var newWeekday: Weekday {
+            switch self {
+            case .monday: return .tuesday
+            case .tuesday: return .wednesday
+            case .wednesday: return .thursday
+            case .thursday: return .friday
+            case .friday: return .saturday
+            case .saturday: return .sunday
+            case .sunday: return .monday
+            }
+        }
+        
+        return newWeekday
+    }
 }
 

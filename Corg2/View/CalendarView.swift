@@ -73,7 +73,7 @@ struct CalendarView: View {
                             .tint(.blue)
                         }
                         .onAppear {
-                            print("\(entry.weekday.number)\(Calendar.current.dateComponents([.hour, .minute], from: entry.startTime))")
+                            //print("\(entry.weekday.number)\(Calendar.current.dateComponents([.hour, .minute], from: entry.startTime))")
                         }
             }
             .toolbar {

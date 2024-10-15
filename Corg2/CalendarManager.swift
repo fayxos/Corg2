@@ -54,8 +54,13 @@ class CalendarManager: ObservableObject {
     func addEntryToCalendar(entry: CalendarEntry, to calendar: EKCalendar, week: Int) {
         let startDate = getDateFromWeekAndTime(week: week, weekday: entry.weekday, time: entry.startTime)!
         
-        let endDate = getDateFromWeekAndTime(week: week, weekday: entry.weekday, time: entry.endTime)!
-        
+        // Check if entry goes up to next day
+        var weekday = entry.weekday
+        if entry.endTime < entry.startTime {
+            weekday = weekday.nextDay()
+        }
+        let endDate = getDateFromWeekAndTime(week: week, weekday: weekday, time: entry.endTime)!
+                
         if fetchEvents(for: calendar, name: entry.name, startDate: startDate, endDate: endDate).isEmpty {
             addEvent(to: calendar, title: entry.name, location: entry.location, startDate: startDate, endDate: endDate)
         }
